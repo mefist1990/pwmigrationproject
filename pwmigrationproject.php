@@ -88,23 +88,18 @@ class Pwmigrationproject extends Module
     public function getContent()
     {
         
-        //dump('stop');
-        //die;
+
         /**
          * If values have been submitted in the form, process.
          */
         $information = "";
-
-
-        
-
 
         if (((bool)Tools::isSubmit('submitPwmigrationprojectModuleProductBackup')) == true) {
             $information = $this->postProcessProductBackup();
         }
 
         if (((bool)Tools::isSubmit('submitPwmigrationprojectModuleProductRestore')) == true) {
-            $this->postProcessProductRestore();
+            $information = $this->postProcessProductRestore();
         }
         if (((bool)Tools::isSubmit('submitPwmigrationprojectModuleDBReset')) == true) {
             $information = $this->postProcessDBReset();
@@ -139,7 +134,7 @@ class Pwmigrationproject extends Module
     {
         
         $information = "";
-        //dump('BACKUP');
+
         $json_product = 
         $json_product_attachment = 
         $json_product_attribute = 
@@ -156,7 +151,7 @@ class Pwmigrationproject extends Module
         $json_product_supplier =
         $json_product_tag = "";
 
-        //die;
+
         $fopen_db = fopen(self::DB_FILE_PATH, "w");
         fclose($fopen_db);
 
@@ -306,8 +301,8 @@ class Pwmigrationproject extends Module
 
     protected function postProcessProductRestore()
     {
-        $db = new Document(self::DB_FILE_PATH, true);
         $information = "";
+        $db = new Document(self::DB_FILE_PATH, true);
         if ($db->has('product')) {
             Db::getInstance()->delete('product');
             $product = $db->find('product');
