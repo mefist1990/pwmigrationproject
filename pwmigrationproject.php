@@ -31,10 +31,7 @@ if (!defined('_PS_VERSION_')) {
 
 class Pwmigrationproject extends Module
 {
-    
     const DB_FILE_PATH = __DIR__.'/tmp/db.htm';
-
-    
     protected $config_form = false;
 
     public function __construct()
@@ -45,19 +42,11 @@ class Pwmigrationproject extends Module
         $this->version = '0.1.0';
         $this->author = 'PrestaWeb.ru';
         $this->need_instance = 1;
-
-        /**
-         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
-         */
         $this->bootstrap = true;
-
         parent::__construct();
-
         $this->displayName = 'Migration Project PW';
         $this->description = 'Модуль для миграции данных, между магазинами';
-
         $this->confirmUninstall = 'Вы уверены что хотите удалить?';
-
         $this->ps_versions_compliancy = array('min' => '1.5', 'max' => _PS_VERSION_);
     }
 
@@ -66,7 +55,6 @@ class Pwmigrationproject extends Module
     {
 
         include(dirname(__FILE__).'/sql/install.php');
-
         return parent::install() &&
             $this->registerHook('header') &&
             $this->registerHook('backOfficeHeader');
@@ -76,20 +64,11 @@ class Pwmigrationproject extends Module
     {
     
         include(dirname(__FILE__).'/sql/uninstall.php');
-
         return parent::uninstall();
     }
 
-    /**
-     * Load the configuration form
-     */
     public function getContent()
     {
-        
-
-        /**
-         * If values have been submitted in the form, process.
-         */
         $information = "";
         $checking_tables = 0;
         if (((bool)Tools::isSubmit('submitPwmigrationprojectModuleProductBackup')) == true) {
@@ -111,7 +90,6 @@ class Pwmigrationproject extends Module
         if (!file_get_contents(self::DB_FILE_PATH)) $empty_file = 0;
         else $empty_file = 1;
         $this->context->smarty->assign('module_dir', $this->_path);
-
         $this->context->smarty->assign(
             array(
                 'ps_version' => _PS_VERSION_,
@@ -124,16 +102,9 @@ class Pwmigrationproject extends Module
 
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
         return $output;
     }
 
-   
-
-
-    /**
-     * Save form data.
-     */
     protected function postProcessProductBackup()
     {
         
@@ -162,9 +133,7 @@ class Pwmigrationproject extends Module
         foreach (PsTables::$ps_17_tables as $key => $name) {
 
             preg_match("'<".$name.">(.*?)</".$name.">'si", file_get_contents(self::DB_FILE_PATH), $json); //находим json строку из файла DB
-
-            if (count($json) > 0) 
-                {
+            if (count($json) > 0) {
                     $columns_one = $columns_two = "";
                     $table_array = json_decode($json[1]); //восстанавливаем массив таблицы $name из файла
                     $array_db = (array)$table_array[0]; //промежуточная переменная
@@ -173,50 +142,40 @@ class Pwmigrationproject extends Module
                     $columns_one_count = count($columns_one);
                     $columns_two_count = count($columns_two);
 
-                    if ($columns_one_count == $columns_two_count) 
-                        {
-                            $information .= '<p class="bg-success">Данные '.$name.' можно восстановить в базу данных, проблем с таблицей нет</p><br>';
-                        }
-                    else
-                        {
-                            $checking_tables--;
-                            $w = max(count($columns_one), count($columns_two)); //промежуточная переменная
-                            $columns_one_new = array_pad($columns_one, $w, 0); //уравниваем два массива
-                            $columns_two_new = array_pad($columns_two, $w, 0); //уравниваем два массива
-                            
-                            if ($columns_one_count > $columns_two_count) {
-                                
-                                $problem_fields = array_diff($columns_one_new, $columns_two_new);
+                    if ($columns_one_count == $columns_two_count) {
+                        $information .= '<p class="bg-success">Данные '.$name.' можно восстановить в базу данных, проблем с таблицей нет</p><br>';
+                    }
+                    else {
+                        $checking_tables--;
+                        $w = max(count($columns_one), count($columns_two)); //промежуточная переменная
+                        $columns_one_new = array_pad($columns_one, $w, 0); //уравниваем два массива
+                        $columns_two_new = array_pad($columns_two, $w, 0); //уравниваем два массива
 
+                            if ($columns_one_count > $columns_two_count) {
+                                $problem_fields = array_diff($columns_one_new, $columns_two_new);
                             }
 
                             if ($columns_one_count < $columns_two_count) {
-                                
                                 $problem_fields = array_diff($columns_two_new, $columns_one_new);
-
                             }
-
                             $problem_fields_json = json_encode($problem_fields);
                             $information .= '<p class="bg-danger">Проблема с таблицей '.$name.', проблема с полями: ' .$problem_fields_json. '  </p><br>';
-
-
-                        }
-                }
+                    }
+            }
         }
         return array($information, $checking_tables);
-
     }
 
     protected function fileDBWrite($name, $information)
     {
         if ($data = Db::getInstance()->ExecuteS('SELECT * FROM '._DB_PREFIX_.$name)){
-        $json = json_encode($data);
-        $fopen_db = fopen(self::DB_FILE_PATH, "a");
-        $fwrite_db = fwrite($fopen_db, '<'.$name.'>'.$json.'</'.$name.'>');
-        if ($fwrite_db) $information .= '<p class="bg-success">Данные '.$name.' в файл успешно занесены </p><br>';
-        else $information .= '<p class="bg-danger">Ошибка '.$name.' при записи в файл </p><br>';
-        fclose($fopen_db); //Закрытие файла
-        return $information;
+            $json = json_encode($data);
+            $fopen_db = fopen(self::DB_FILE_PATH, "a");
+            $fwrite_db = fwrite($fopen_db, '<'.$name.'>'.$json.'</'.$name.'>');
+            if ($fwrite_db) $information .= '<p class="bg-success">Данные '.$name.' в файл успешно занесены </p><br>';
+            else $information .= '<p class="bg-danger">Ошибка '.$name.' при записи в файл </p><br>';
+            fclose($fopen_db); //Закрытие файла
+            return $information;
         }
         else return $information;
     }
