@@ -55,7 +55,10 @@
 
 				<p class="text-center">
 					{if $empty_file == 0}<button type="submit" name="submitPwmigrationprojectModuleProductBackup" > Занести данные в DB </button>{/if}
-					{if $empty_file == 1}<button type="submit" name="submitPwmigrationprojectModuleProductRestore" > Восстановить данные из DB </button>
+					{if $empty_file == 1}<button type="submit" name="submitPwmigrationprojectModuleCheckingTables" > Произвести проверку таблиц на конфликты </button>
+					{if $checking_tables > 0}
+					<button type="submit" name="submitPwmigrationprojectModuleProductRestore" >Восстановить данные в Базу данных из DB</button>{/if}
+
 					<button type="submit" name="submitPwmigrationprojectModuleDBReset" > Очистить DB </button>
 
 					{/if}

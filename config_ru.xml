@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>pwmigrationproject</name>
+	<displayName><![CDATA[Migration Project PW]]></displayName>
+	<version><![CDATA[0.1.0]]></version>
+	<description><![CDATA[Модуль для миграции данных, между магазинами]]></description>
+	<author><![CDATA[PrestaWeb.ru]]></author>
+	<tab><![CDATA[migration_tools]]></tab>
+	<confirmUninstall><![CDATA[Вы уверены что хотите удалить?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
